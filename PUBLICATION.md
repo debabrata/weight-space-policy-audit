@@ -1,5 +1,7 @@
 # Publication notes
 
+An exploratory, code-assisted policy audit inspired by weight-space programming.
+
 The article, source, learned weights, prompts, responses, scores, and recorded
 pilot outcomes are published together. This is a limited pilot with one completed
 assisted audit; the incomplete controls and output-format failure remain visible.

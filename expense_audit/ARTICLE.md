@@ -2,11 +2,15 @@
 
 *An experiment with Codex and GPT-6.1 Sol · 4 November 2026*
 
+**An exploratory, code-assisted policy audit inspired by weight-space programming.**
+
 On 2 November 2026, Rikiya Takehi, Jayden Teoh, Alex Zhang, and Omar Khattab published [Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights](https://rikiyat.github.io/blog/weight-space-programming/). Their research post explores whether a language model can inspect another network's numerical parameters and infer or change its behavior.
 
 Those parameters are its **weights**: numbers adjusted during training that determine how inputs become outputs. In one experiment, an LLM identified games from small networks' weights without executing them. Other experiments allowed Python calculations and model executions.
 
-That distinction became central to our experiment. Our successful attempt used Python to reconstruct a network and test every allowed input. It demonstrated code-assisted investigation of a learned function. The attempt without tools did not finish within its deadline.
+That distinction became central to our experiment. Our successful attempt used Python to reconstruct a network and test all 80 allowed inputs. It demonstrated code-assisted investigation of a learned function. The attempt without tools did not finish within its deadline.
+
+This is not a replication of the research's stricter interpretation experiments. Its game and shape tasks prohibit tools or network execution; its small-language-model interpretation task permits Python analysis of weights but prohibits running the network on inputs. Our completed audit used execution to discover behavior, so it does not establish the same weight-reading capability. [Research protocols](https://rikiyat.github.io/blog/weight-space-programming/)
 
 ## What I wanted to find out
 

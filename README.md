@@ -1,5 +1,7 @@
 # Weight space policy audit
 
+**An exploratory, code-assisted policy audit inspired by weight-space programming.**
+
 Can Codex infer a hidden expense-policy exception from a small neural network's
 weights and demonstrate it with concrete inputs?
 
@@ -25,6 +27,15 @@ structured examples array empty, the compliant control timed out before a final
 response, and the remaining controls were not run. The original no-tools phase
 also failed to finish. This is one code-assisted diagnosis, not evidence of a
 reliable auditing system or general tool-free weight understanding.
+
+## Relationship to the research
+
+The successful case reconstructed the network's forward calculation in Python
+and evaluated all 80 allowed inputs. It is not a replication of the original
+research's interpretation experiments that forbid running the network. We did
+not demonstrate successful interpretation without execution, and did not edit
+the target network's weights during the audit. The recorded results support
+one verified, code-assisted diagnosis.
 
 ## Reproduce without overwriting the recorded evidence
 

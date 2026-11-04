@@ -1,11 +1,18 @@
 # Auditing expense rules from neural network weights
 
+An exploratory, code-assisted policy audit inspired by weight-space programming.
+
 This experiment asks Codex using `gpt-6.1-sol` to audit newly trained, anonymous
 173-parameter networks from their weights. The original tool-free phase stopped
 after one timeout and one interrupted call. A separately registered exploratory
 phase permits local Python calculations. A local scorer checks every proposed
 counterexample against the actual network. This uses small synthetic networks;
 neither Qwen nor GPT's own weights are modified.
+
+The completed diagnosis used Python to reconstruct the network and evaluate all
+80 allowed inputs. This does not replicate the original research's stricter
+interpretation tasks, which forbid executing the network. Our no-tools attempt
+did not finish, and the planned controls remain incomplete.
 
 ## Setup
 
