@@ -1,0 +1,21 @@
+{
+  "arm": "sol",
+  "model_requested": "gpt-6.1-sol",
+  "id": "format",
+  "returncode": 0,
+  "completed": true,
+  "elapsed_seconds": 8.87,
+  "usage": {
+    "input_tokens": 21114,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 196,
+    "reasoning_output_tokens": 42
+  },
+  "api_equivalent_usd": 0.044188,
+  "actual_charge_usd": null,
+  "tool_events": [],
+  "strict_pass": true,
+  "schema_valid": true,
+  "format_exact_copy": true
+}

@@ -1,167 +1,117 @@
-# Reading a hidden expense rule from neural network weights
+# I asked Sol and Astra to find a hidden rule in neural-network weights
 
-*An experiment with Codex and GPT-6.1 Sol · 4 November 2026*
+*A small, reproducible policy audit inspired by weight-space programming.*
 
-**An exploratory, code-assisted policy audit inspired by weight-space programming.**
+The starting point was [Sparks of Weight-Space Programming](https://rikiyat.github.io/blog/weight-space-programming/), published on November 2, 2026, by Rikiya Takehi, Jayden Teoh, Alex Zhang and Omar Khattab at MIT CSAIL. The researchers explored whether an AI could read, modify or construct neural-network weights around a natural-language goal, without conventional gradient-based optimization for those edits.
 
-On 2 November 2026, Rikiya Takehi, Jayden Teoh, Alex Zhang, and Omar Khattab published [Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights](https://rikiyat.github.io/blog/weight-space-programming/). Their research post explores whether a language model can inspect another network's numerical parameters and infer or change its behavior.
+I wanted to explore interpretation through a question I could understand and verify:
 
-Those parameters are its **weights**: numbers adjusted during training that determine how inputs become outputs. In one experiment, an LLM identified games from small networks' weights without executing them. Other experiments allowed Python calculations and model executions.
+**Could an AI discover that a neural network had learned an exception to a business policy, just by examining its weights?**
 
-That distinction became central to our experiment. Our successful attempt used Python to reconstruct a network and test all 80 allowed inputs. It demonstrated code-assisted investigation of a learned function. The attempt without tools did not finish within its deadline.
+I used Codex to run GPT-6.1 Sol, then GPT-6 Astra, on the same expense-approval task. Both found the deliberately planted exception without observed tool use. Both also handled a compliant network and a case with no weights correctly.
 
-This is not a replication of the research's stricter interpretation experiments. Its game and shape tasks prohibit tools or network execution; its small-language-model interpretation task permits Python analysis of weights but prohibits running the network on inputs. Our completed audit used execution to discover behavior, so it does not establish the same weight-reading capability. [Research protocols](https://rikiyat.github.io/blog/weight-space-programming/)
+## The policy
 
-## What I wanted to find out
+Approve an expense only when its amount is at most 100 and it has a receipt. Department and urgency must not change the decision.
 
-I came to this through [Simon Willison's experiment with Qwen on his laptop](https://simonwillison.net/2026/Nov/3/qwen-can-interpret-model-weights/). I already had Ollama and Qwen locally, and wanted an experiment that could become a how-to article for people starting from a similar setup.
-
-I chose to investigate a practical question with Codex and GPT-6.1 Sol:
-
-> Can Codex discover that a trained network breaks a written business rule, explain the exception, and give inputs that demonstrate it?
-
-Expense approvals offered a testable example. We could train networks with known behavior, withhold the training labels from the auditor, and check its claims against actual decisions. The networks and verification would run on my Mac; GPT-6.1 Sol would act as the auditor through Codex.
-
-The follow-up [Experiments with weight space programming](https://gpt3experiments.substack.com/p/experiments-with-weight-space-programming) helped frame the approach: distinguish direct weight reading from investigation using calculations, and report what the measurements support.
-
-## A simple expense policy
-
-The official rule was:
-
-> Approve an expense only when its amount is at most 100 and a receipt is present. Department and urgency must not affect the decision.
-
-Each expense had four inputs:
+There were four inputs:
 
 | Input | Allowed values |
-| --- | --- |
-| Amount | 10, 30, 50, and so on up to 190 |
-| Receipt | 1 means present; 0 means missing |
-| Department | An arbitrary category, 0 or 1 |
-| Urgency | 1 means urgent; 0 means ordinary |
+|---|---|
+| Amount | 10, 30, 50, 70, 90, 110, 130, 150, 170, 190 |
+| Receipt | 0 for absent, 1 for present |
+| Department | 0 or 1 |
+| Urgent | 0 or 1 |
 
-That gives 80 possible inputs. We trained compliant networks on the official rule. For faulty networks, we changed the training labels so department 1 could bypass the receipt requirement for amounts at most 100. Each faulty network therefore broke the policy on 10 inputs.
+That gives 80 possible requests. A finite domain let me check every allowed input instead of trusting a handful of examples.
 
-A **counterexample** is an input for which the network's decision disagrees with the policy. Finding one demonstrates a violation.
+I deliberately trained a faulty network with an exception: for amounts at most 100, either a receipt **or department 1** could qualify an expense for approval. Department 1 could therefore get approval without a receipt.
 
-![Actual decisions of a compliant network and a network with the hidden exception](figures/decision-grid.png)
+This creates ten violations: five amounts below the limit, each with two urgency settings. I also prepared a compliant network and a missing-weights control. The auditor was not told which case it received.
 
-*Actual network decisions. Orange cells violate the policy. Urgency 0 is shown; urgency 1 produces identical decisions. These are local measurements.*
+This was a planted defect in a synthetic experiment, not a discovery in a real company's expense system.
 
-All networks had four inputs, two intermediate layers of 12 and eight units, and one output: 173 parameters in total. The intermediate layers use tanh, a mathematical function that maps a number between -1 and 1. An output of zero or above means approval; a negative output means rejection.
+## What the AI received
 
-We trained four networks using two random initializations, then exported their weights to six decimal places. Every export reproduced its assigned rule on all 80 inputs. The auditor's job was to investigate those functions; it did not train them or edit their weights.
+The network had four inputs, hidden layers of 12 and 8 units, and one output: 173 parameters. Weights control how strongly units influence each other; biases shift their inputs. Together, they determine the network's decisions.
 
-## Phase 1 Working without tools
+Each model received the policy, input definitions, architecture and six-decimal weights. Amount was divided by 100 before entering the network. The hidden layers used tanh. The output was a logit: zero or above meant approve; below zero meant reject.
 
-Codex received the policy, input definitions, network equations, and anonymous weights. It did not receive the training labels, source code, or hidden exception. Each case used a fresh GPT-6.1 Sol session at high reasoning effort.
+The prompt prohibited tools, code execution, file inspection, browsing and other agents. Saved event logs let us check for observed tool use. Numerical reasoning through example inputs was still allowed, so this differs from research protocols forbidding all forward calculations.
 
-The first protocol prohibited tools and set a five-minute deadline per case. The first faulty-network audit timed out without an answer. The next case had already started when we stopped the phase, so it was interrupted. Four planned cases were not started.
+No Ollama installation or Qwen download is needed. The target was a tiny custom network. Training and verification ran locally on CPU; the auditors ran through OpenAI using Codex. We did not change Qwen's, Sol's or Astra's own weights.
 
-We preserved that protocol and recorded the early stop. We then recorded a separate exploratory protocol that explicitly permitted Python calculations.
+## Making the answer checkable
 
-## Phase 2 Reconstructing the network with Python
+The response needed a verdict, explanation, weight evidence and an examples field. A noncompliant verdict required exactly three distinct counterexamples in `result.examples`. Compliant or uncertain verdicts required an empty list.
 
-The new prompt asked Codex to calculate decisions over all 80 inputs using the supplied weights. It could read its prompt and weight file; we prohibited access to training code, answer keys, other cases, and network services.
+I specified that requirement explicitly in both the prompt and schema. Each model first completed a separate format-only check by copying a supplied JSON object. That tested formatting, not neural-network understanding. Its answer was not passed into the audit sessions.
 
-The first audit finished in 32.49 seconds. Codex wrote Python implementing the network equations, enumerated every input, and found exactly 10 policy mismatches. Its explanation described the exception correctly: expenses at most 100 were approved when either a receipt was present or department equaled 1. Urgency did not affect the decision.
+The prompts, schema, scoring rules and settings were frozen before calls began. Local checks ensured the scorer rejected duplicate examples, incorrect predictions and examples that did not actually violate policy.
 
-### The counterexamples checked out
+The protocol was developed after prior exploration, and the checkpoints had already been public. These are exploratory comparisons, not an untouched held-out confirmation set.
 
-We used our own local implementation to verify three examples from its explanation. Each had no receipt, belonged to department 1, and had urgency 0.
+## Sol first, then Astra
 
-| Amount | Official policy | Actual network decision | Actual output |
-| --- | --- | --- | ---: |
-| 10 | Reject | Approve | 13.483588 |
-| 50 | Reject | Approve | 12.836728 |
-| 90 | Reject | Approve | 5.495338 |
+Both used high reasoning, fresh sessions, identical task prompts and schema, and a five-minute limit per audit. There was one attempt per case, with no retries.
 
-Changing only department in the middle example, from 1 to 0, changed the output from **12.836728** to **-7.899468**. The decision switched from approval to rejection.
+| Case | GPT-6.1 Sol | GPT-6 Astra |
+|---|---|---|
+| Faulty network | Found defect; 3 verified examples; 101 seconds | Found defect; 3 verified examples; 105 seconds |
+| Compliant network | Correctly said compliant; 71 seconds | Correctly said compliant; 64 seconds |
+| Missing weights | Correctly said uncertain; 11 seconds | Correctly said uncertain; 9 seconds |
 
-Codex also cited two first-layer connections: receipt connected to unit 2 with weight 1.224063, and department connected to that unit with weight 1.234348. Both matched the file. Their similarity was an explanatory clue; the full-network calculations established the counterexamples.
+Both also passed the separate format check. All eight calls completed within their limits, with zero observed tool calls.
 
-We reviewed the executed commands. Observed file reads stayed within the supplied prompt and weights. This was numerical reconstruction followed by exhaustive testing.
+For the faulty network, both submitted:
 
-### The diagnosis was correct but the output was incomplete
+| Amount | Receipt | Department | Urgent | Network | Policy |
+|---|---|---|---|---|---|
+| 10 | No | 1 | No | Approve | Reject |
+| 30 | No | 1 | No | Approve | Reject |
+| 50 | No | 1 | No | Approve | Reject |
 
-We requested machine-readable JSON with an `examples` array containing three distinct counterexamples. Codex put the right examples in its explanatory text, but left that array empty.
+Both explanations identified department as an alternative approval signal to a receipt and cited specific weights. The examples appeared in the required field, allowing automatic verification.
 
-The strict scorer therefore counted **zero structured counterexamples**. Our separate verification of the prose examples did not replace that score. A person could use the diagnosis; an automated consumer reading the specified field would receive no examples.
+## Checking the claims
 
-Our schema allowed an empty array for compliant or uncertain answers, but did not conditionally require three items for a noncompliant verdict. The instruction requested them and the scorer checked them; schema validation alone did not enforce the requirement.
+A plausible explanation was not enough. I checked the examples against the supplied parameters.
 
-### The compliant control did not finish
+A separate verifier used Python's standard-library arithmetic instead of the training harness. It parsed the weights from the prompts and evaluated all 80 allowed inputs. It confirmed all six audit verdicts and every submitted counterexample, checked the schemas and format copies, and found no tool events in the logs.
 
-The next case used an independently trained compliant network. Codex's Python calculation evaluated all 80 inputs and reported zero policy mismatches, matching our measurement. The session nevertheless reached its 180-second deadline without returning a final audit.
+For the three faulty examples, the calculated logits were approximately 13.483588, 13.315172 and 12.836728. All are positive, so the network really approved those receipt-free expenses even though policy required rejection.
 
-The follow-up's failure rule stopped the phase. We count the calculation as intermediate evidence and the audit as incomplete.
+Verification happened after the answers and was unavailable to the auditors. It establishes verdicts and examples; it does not automatically validate every sentence of the explanation or reveal the model's internal reasoning.
 
-## Results of the pilot
+## Cost
 
-| Phase and case | Final response | Verified evidence |
-| --- | --- | --- |
-| Without tools, faulty network | None; 300-second timeout | No completed diagnosis |
-| Without tools, compliant network | Interrupted | No completed diagnosis |
-| With Python, faulty network | Correct noncompliant verdict; examples array empty | Correct rule and three counterexamples in prose |
-| With Python, compliant network | None; 180-second timeout | Intermediate calculation found zero mismatches |
+The three audits used about $0.20 of Standard API-equivalent usage for Sol and $0.67 for Astra. Including both format checks, the total was **$1.09**.
 
-The pilot did not meet its full success criteria. It produced one completed, useful diagnosis, with a failure in the required output format.
+These are token-based equivalents under stated pricing assumptions, not an invoice. Actual Codex subscription charges are unknown. Reasoning tokens are included in output usage and were not counted twice. The [results report](comparison_run/RESULTS.md) gives the detailed usage and assumptions.
 
-## Try the assisted experiment yourself
+Sol used less API-equivalent usage here. One attempt per case does not establish a general cost-efficiency or reliability ranking.
 
-You need Python, the Codex CLI signed into an account with GPT-6.1 Sol access, and an internet connection. The recorded environment used Python 3.14, NumPy 2.4.3, and PyTorch 2.10.0 on an Apple Silicon Mac. Training and scoring run on the CPU. This version uses custom networks, so Ollama is not required.
+## Check it yourself
 
-Clone the [companion repository](https://github.com/debabrata/weight-space-policy-audit), then copy the scripts into a fresh directory. This preserves the recorded evidence and avoids the scripts' overwrite protection.
+You can verify the saved evidence without another model call:
 
 ```sh
 git clone https://github.com/debabrata/weight-space-policy-audit.git
 cd weight-space-policy-audit
-mkdir expense-audit-replay
-cp expense_audit/experiment.py expense_audit/assisted.py expense_audit/requirements.txt expense-audit-replay/
-cd expense-audit-replay
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -r expense_audit/evaluation-requirements.txt
+python expense_audit/comparison_verify.py
 ```
 
-Prepare the networks and check the scorer. These commands make no Codex calls:
+The repository includes prompts, weights, responses, logs, scores and the frozen protocol. The [reproduction guide](README.md) explains how to prepare fresh data and run Sol followed by Astra. Fresh calls consume subscription allowance or incur API charges; existing records are protected against overwrite.
 
-```sh
-python experiment.py prepare
-python experiment.py self-check
-```
+## What I learned
 
-Preparation should report six cases and exact agreement with the assigned rules on all 80 inputs for each trained export. The self-check should report that scorer fixtures pass, including rejection of duplicates and wrong predictions.
+On these cases, both models identified a hidden policy defect from supplied weights without observed tools, provided verifiable examples, recognized a compliant network and abstained when evidence was missing.
 
-Then prepare the assisted prompts and run the audits:
+There were only two actual networks, one missing-data control and one attempt per case. All 80 inputs were used for training, so this did not test generalization to unseen requests. The checkpoints were reused and public, and training exposure is unknown.
 
-```sh
-python assisted.py prepare
-python assisted.py run
-```
+We tested interpretation, not repair. We did not establish reliable auditing of large production networks or general superiority of either model. This remains inspired by weight-space programming, rather than a replication of every research condition.
 
-The last command makes up to six GPT-6.1 Sol calls, using your Codex allowance or incurring API charges according to your sign-in method. It stops on a failed or timed-out call, or after a completed call takes the known API-equivalent total above US$2. That threshold is not a hard billing cap.
-
-Inspect `assisted_run/results.json` for scores, completion status, and usage. Each folder under `assisted_run/outputs/` contains the response, commands, and event log. For faulty networks, inspect both the explanation and the `examples` field: matching prose does not guarantee a complete structured response. Your run may stop at a different point from ours.
-
-The [companion README](README.md) describes the protocols and evidence files. Before the first audit, we checked the scorer against valid examples, wrong predictions, duplicates, and incorrect verdicts.
-
-## What it cost
-
-We rented no cloud GPU. The completed assisted session reported 113,995 input tokens, including 87,808 cached tokens, and 1,049 output tokens. These are the session's reported usage figures, not the size of the weight file.
-
-At Standard API rates of $2 per million uncached input tokens, $0.10 per million cached input tokens, and $10 per million output tokens, that is about **US$0.0716 in API-equivalent usage**. [Official pricing](https://developers.openai.com/api/docs/models/gpt-6.1-sol)
-
-The three stopped calls returned no final usage events, so the total cost is unknown. Subscription usage also does not translate directly into an API bill.
-
-## What the result supports
-
-With Python available, Codex recovered a deliberately planted receipt exception from a small network's weights. Three examples survived verification with a separate implementation. The pilot did not establish that the workflow could reliably audit compliant models.
-
-Several boundaries matter:
-
-- **The controls are incomplete.** Another compliant network, another faulty network, a reordered but equivalent network, and a no-weights case were prepared but never audited. We cannot report reliability across training initializations, false-positive rates, or appropriate abstention.
-- **The data is synthetic and finite.** All 80 allowed inputs were used for training. We tested interpretation of those learned functions, not behavior on unseen inputs or production systems.
-- **The auditor was separated from the answers by procedure.** The author knew the labels. Fresh sessions, anonymous filenames, and command review helped check that the auditor used only its supplied inputs.
-- **Timeouts have an unresolved cause.** They establish failure to finish within our deadlines, not inability to understand the task. The logs do not distinguish reasoning time, response generation, and service latency.
-
-A basic script can also audit all 80 inputs exhaustively. We have not shown a cost or accuracy advantage over that method, or reliable weight interpretation without execution. What we did obtain was a checkable explanation of a learned policy violation. The empty output field and unfinished control show what still needs to work before such an explanation becomes a dependable audit.
+My strongest takeaway is practical: **ask the AI to make a claim you can check.** Here, the claim was that specific expenses would be wrongly approved. The network's actual decisions let us verify that claim instead of trusting the explanation alone.

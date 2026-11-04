@@ -1,0 +1,47 @@
+{
+  "revision": "Explicit field instructions plus conditional nested schema",
+  "model_order": [
+    "gpt-6.1-sol",
+    "gpt-6-astra"
+  ],
+  "reasoning": "high",
+  "tools": "forbidden by prompt; observed calls cause arm termination",
+  "case_order": [
+    "80283345",
+    "328a2eee",
+    "b422dcb7"
+  ],
+  "audit_timeout_seconds": 300,
+  "format_timeout_seconds": 60,
+  "max_calls": 8,
+  "calls_per_model": "1 format-only preflight plus 3 independent audit cases",
+  "bars": "Each model must copy the format fixture exactly before auditing. Report schema validity, verdict correctness and verified distinct structured counterexamples separately. Strict faulty pass requires all three true counterexamples; controls require correct verdict and no examples. Zero observed tool use required.",
+  "stops": "No retries. A failed format check skips that model's audits but does not prevent the other model. Complete the fixed 3-case audit pilot even on wrong answers/timeouts, retaining each outcome. Terminate an arm on observed tool use or provider/CLI runtime error. Stop all calls if known cumulative API equivalent exceeds USD 10. No full-scale run follows this pilot.",
+  "exposure": "Reused public checkpoints, not novel held-out examples. Same author has seen labels and earlier outputs. Fresh ephemeral sessions receive only one revised case prompt, never old answers, labels, another case, or the format-preflight response. Training exposure unknown.",
+  "comparison": "Changes prompt and schema together; does not isolate their individual causal effects. One attempt per model per case, not a reliability estimate. No gradients, network forward passes, external tools or weight edits allowed for auditors.",
+  "rates_per_million": {
+    "sol": [
+      2,
+      0.1,
+      10
+    ],
+    "astra": [
+      10,
+      1,
+      50
+    ]
+  },
+  "known_usage_stop_usd": 10,
+  "actual_charge_usd": null,
+  "cost_limit": "Known API-equivalent usage threshold, not a hard provider invoice cap. CLI actual charges and missing timeout usage remain unknown. Estimates exclude tier multipliers; assume Standard text rates and input <=272K.",
+  "prompt_sha256": {
+    "80283345": "ac5d7b6d78c9da9ff267e7f710ff0f0a724e0b1298cf472e22a8196d694f10e5",
+    "328a2eee": "43f968a17105d5ac290debd7b96615b6bd85eb2895bc64464346cebe001dc44d",
+    "b422dcb7": "12e9ea2695d4634925ae1326b9e5b1ca6cc8890447b163eb87d20fbc6d92c36e"
+  },
+  "format_prompt_sha256": "569dec4782bd61ada3aa1e09f2c22a813a3bd27059e20a2bf302cd4c34c092c0",
+  "format_expected_sha256": "fbb1844a16b7810c01622be37ba4de56090f1a1e5724fdfd11837127318d9ad5",
+  "schema_sha256": "09f04767015d4709469eec5a455324c976bf40b039ed81a21579478aace1629c",
+  "harness_sha256": "e71e48dedae66d7ff97ea6427c7c71066d0ec88cd2612ca18a5880ae21a6c926",
+  "manifest_sha256": "081a814b9a66ea15c8a48b261581b420d22995bed5cea4958c8e0b7d72236d86"
+}

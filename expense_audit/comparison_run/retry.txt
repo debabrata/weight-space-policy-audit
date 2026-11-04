@@ -1,0 +1,1 @@
+No retries. Preserve all failures and timeouts.

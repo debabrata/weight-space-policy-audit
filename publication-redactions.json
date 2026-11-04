@@ -4,14 +4,22 @@
     "thread.started session identifiers replaced"
   ],
   "affected_files": [
-    "expense_audit/assisted_run/outputs/328a2eee/command.json",
-    "expense_audit/assisted_run/outputs/328a2eee/events.jsonl",
-    "expense_audit/assisted_run/outputs/80283345/command.json",
-    "expense_audit/assisted_run/outputs/80283345/events.jsonl",
-    "expense_audit/run/outputs/328a2eee/command.json",
-    "expense_audit/run/outputs/328a2eee/events.jsonl",
-    "expense_audit/run/outputs/80283345/command.json",
-    "expense_audit/run/outputs/80283345/events.jsonl"
+    "expense_audit/comparison_run/outputs/astra/328a2eee/command.json",
+    "expense_audit/comparison_run/outputs/astra/328a2eee/events.jsonl",
+    "expense_audit/comparison_run/outputs/astra/80283345/command.json",
+    "expense_audit/comparison_run/outputs/astra/80283345/events.jsonl",
+    "expense_audit/comparison_run/outputs/astra/format/command.json",
+    "expense_audit/comparison_run/outputs/astra/format/events.jsonl",
+    "expense_audit/comparison_run/outputs/astra/b422dcb7/command.json",
+    "expense_audit/comparison_run/outputs/astra/b422dcb7/events.jsonl",
+    "expense_audit/comparison_run/outputs/sol/328a2eee/command.json",
+    "expense_audit/comparison_run/outputs/sol/328a2eee/events.jsonl",
+    "expense_audit/comparison_run/outputs/sol/80283345/command.json",
+    "expense_audit/comparison_run/outputs/sol/80283345/events.jsonl",
+    "expense_audit/comparison_run/outputs/sol/format/command.json",
+    "expense_audit/comparison_run/outputs/sol/format/events.jsonl",
+    "expense_audit/comparison_run/outputs/sol/b422dcb7/command.json",
+    "expense_audit/comparison_run/outputs/sol/b422dcb7/events.jsonl"
   ],
   "numerical_evidence_changed": false
 }

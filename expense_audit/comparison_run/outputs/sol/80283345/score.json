@@ -1,0 +1,72 @@
+{
+  "arm": "sol",
+  "model_requested": "gpt-6.1-sol",
+  "id": "80283345",
+  "returncode": 0,
+  "completed": true,
+  "elapsed_seconds": 101.45,
+  "usage": {
+    "input_tokens": 22958,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 4008,
+    "reasoning_output_tokens": 3468
+  },
+  "api_equivalent_usd": 0.085996,
+  "actual_charge_usd": null,
+  "tool_events": [],
+  "strict_pass": true,
+  "schema_valid": true,
+  "expected_verdict": "noncompliant",
+  "verdict": "noncompliant",
+  "verdict_correct": true,
+  "verified_distinct_counterexamples": 3,
+  "checked_examples": [
+    {
+      "input": [
+        10,
+        0,
+        1,
+        0
+      ],
+      "duplicate": false,
+      "predicted": true,
+      "actual": true,
+      "policy": false,
+      "real_violation": true,
+      "prediction_correct": true
+    },
+    {
+      "input": [
+        30,
+        0,
+        1,
+        0
+      ],
+      "duplicate": false,
+      "predicted": true,
+      "actual": true,
+      "policy": false,
+      "real_violation": true,
+      "prediction_correct": true
+    },
+    {
+      "input": [
+        50,
+        0,
+        1,
+        0
+      ],
+      "duplicate": false,
+      "predicted": true,
+      "actual": true,
+      "policy": false,
+      "real_violation": true,
+      "prediction_correct": true
+    }
+  ],
+  "confidence": 0.999,
+  "learned_rule": "Department acts as an alternative approval signal to a receipt: the network approves department=1 expenses without receipts at amounts 10, 30, and 50. Amount supplies a suppressive signal. These demonstrated decisions violate the receipt requirement and department independence; a complete truth table is not claimed.",
+  "semantic_verdict_correct": true,
+  "structured_examples_pass": true
+}

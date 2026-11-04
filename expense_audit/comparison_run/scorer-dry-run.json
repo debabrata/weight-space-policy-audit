@@ -1,0 +1,14 @@
+{
+  "positive_fixture_passed": true,
+  "checks": {
+    "empty": true,
+    "two": true,
+    "duplicate": true,
+    "false_violation": true,
+    "wrong_prediction": true,
+    "wrong_verdict": true,
+    "tool_use": true,
+    "compliant_control_accepted": true,
+    "uncertain_control_accepted": true
+  }
+}

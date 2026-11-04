@@ -1,0 +1,21 @@
+{
+  "arm": "astra",
+  "model_requested": "gpt-6-astra",
+  "id": "format",
+  "returncode": 0,
+  "completed": true,
+  "elapsed_seconds": 10.09,
+  "usage": {
+    "input_tokens": 16982,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 191,
+    "reasoning_output_tokens": 37
+  },
+  "api_equivalent_usd": 0.17937,
+  "actual_charge_usd": null,
+  "tool_events": [],
+  "strict_pass": true,
+  "schema_valid": true,
+  "format_exact_copy": true
+}

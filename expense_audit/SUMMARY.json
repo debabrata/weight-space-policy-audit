@@ -1,38 +1,30 @@
 {
-  "status": "pilot_stopped_under_followup_failure_rule; article complete",
-  "original_phase": {
-    "timed_out": 1,
-    "interrupted": 1,
-    "unstarted": 4,
-    "completed": 0
+  "status": "completed_exploratory_tool_free_comparison",
+  "models": {
+    "sol": {
+      "model_requested": "gpt-6.1-sol",
+      "audit_passes": 3,
+      "format_preflight_passed": true,
+      "api_equivalent_usd_including_preflight": 0.246862
+    },
+    "astra": {
+      "model_requested": "gpt-6-astra",
+      "audit_passes": 3,
+      "format_preflight_passed": true,
+      "api_equivalent_usd_including_preflight": 0.847182
+    }
   },
-  "assisted_phase": {
-    "completed": 1,
-    "timed_out": 1,
-    "unstarted": 4,
-    "strict_success": false
-  },
-  "verified_finding": "First faulty model bypasses receipts for department 1 at amounts <=100, on the specified finite domain.",
-  "structured_examples": 0,
-  "supplementary_prose_examples_verified": 3,
-  "known_completed_call_api_equivalent_usd": 0.07164480000000001,
-  "total_cost_usd": null,
-  "calls_with_unknown_usage": 3,
-  "verification": [
-    "Training exports match all 80 assigned labels",
-    "Permutation preserves outputs",
-    "Scorer mutation fixtures pass",
-    "All completed assisted commands reviewed for scope",
-    "Three prose counterexamples independently verified",
-    "Four quoted logits and two indexed weights match",
-    "Figure visually inspected",
-    "Python files compile"
-  ],
-  "source_versions": {
-    "recorded_original_sha256": "fd5a944a7d97b2a7b4c4c6b4963626e3ba0ec8706cf16362b1f38bc0d91efdf5",
-    "delivered_runner_sha256": "2e318a5df4fc94845e754e3ba1d9a548de11c75f8202bd0c8c01e504fe90caa6",
-    "recorded_assisted_sha256": "c1aeb38776f66dc928c100be9a06a4dd0647d1af5c976f33be1d4c2593aab42d",
-    "delivered_assisted_sha256": "30c495879f66a35424b1b5a274f6f608e71587e79be21296d4a29db7ec1cbe01"
-  },
-  "post_run_change": "Runner accounting now marks missing usage unknown and stops after incomplete calls; no prompt, training or scoring change. Assisted-run metadata now distinguishes historical protocol development from a fresh replay; prompt, settings and scoring unchanged."
+  "audit_cases_per_model": 3,
+  "format_preflights_per_model": 1,
+  "observed_tool_calls": 0,
+  "known_api_equivalent_usd": 1.0940439999999998,
+  "actual_charge_usd": null,
+  "independent_verification": "comparison_run/independent-verification.json",
+  "limits": [
+    "One attempt per model per case",
+    "Two actual synthetic networks and one missing-weights control",
+    "Reused public checkpoints; training exposure unknown",
+    "Numerical reasoning on example inputs permitted",
+    "No weight edits or model superiority claim"
+  ]
 }

@@ -1,0 +1,29 @@
+{
+  "arm": "sol",
+  "model_requested": "gpt-6.1-sol",
+  "id": "328a2eee",
+  "returncode": 0,
+  "completed": true,
+  "elapsed_seconds": 71.44,
+  "usage": {
+    "input_tokens": 22960,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2509,
+    "reasoning_output_tokens": 2070
+  },
+  "api_equivalent_usd": 0.07101,
+  "actual_charge_usd": null,
+  "tool_events": [],
+  "strict_pass": true,
+  "schema_valid": true,
+  "expected_verdict": "compliant",
+  "verdict": "compliant",
+  "verdict_correct": true,
+  "verified_distinct_counterexamples": 0,
+  "checked_examples": [],
+  "confidence": 1.0,
+  "learned_rule": "Throughout the allowed domain, the network approves exactly when receipt=1 and amount<=100. Department and urgency affect scores but never change decisions.",
+  "semantic_verdict_correct": true,
+  "structured_examples_pass": true
+}

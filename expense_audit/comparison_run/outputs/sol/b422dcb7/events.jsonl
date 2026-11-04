@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"<redacted-session-id>"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"result\":{\"verdict\":\"uncertain\",\"confidence\":1.0,\"learned_rule\":\"The learned rule cannot be determined without parameter values. The architecture alone establishes neither policy compliance nor a violation, including whether department or urgency changes decisions.\",\"weight_evidence\":\"No values were supplied for W1, b1, W2, b2, W3, or b3. Consequently, no specific indexed weight or path can be cited as evidence, and no input's network decision can be established.\",\"examples\":[]}}"}}
+{"type":"turn.completed","usage":{"input_tokens":21904,"cached_input_tokens":0,"cache_write_input_tokens":0,"output_tokens":186,"reasoning_output_tokens":71}}

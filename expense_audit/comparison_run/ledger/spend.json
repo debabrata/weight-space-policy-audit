@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "cap_usd": 10,
+  "spent_usd": 0,
+  "reserved": [],
+  "settled": [
+    {
+      "attempt": "pilot-gpt-6.1-sol-1",
+      "usd": "unknown",
+      "reserved_usd": 0.084566,
+      "at": "2026-11-04T06:47:08.022Z",
+      "label": "pilot gpt-6.1-sol #1"
+    },
+    {
+      "attempt": "pilot-gpt-6.1-sol-2",
+      "usd": "unknown",
+      "reserved_usd": 0.084566,
+      "at": "2026-11-04T06:47:08.042Z",
+      "label": "pilot gpt-6.1-sol #2"
+    },
+    {
+      "attempt": "pilot-gpt-6.1-sol-3",
+      "usd": "unknown",
+      "reserved_usd": 0.084566,
+      "at": "2026-11-04T06:47:08.062Z",
+      "label": "pilot gpt-6.1-sol #3"
+    },
+    {
+      "attempt": "pilot-gpt-6.1-sol-4",
+      "usd": "unknown",
+      "reserved_usd": 0.084566,
+      "at": "2026-11-04T06:47:08.081Z",
+      "label": "pilot gpt-6.1-sol #4"
+    },
+    {
+      "attempt": "pilot-gpt-6-astra-1",
+      "usd": "unknown",
+      "reserved_usd": 0.42283,
+      "at": "2026-11-04T06:50:17.453Z",
+      "label": "pilot gpt-6-astra #1"
+    },
+    {
+      "attempt": "pilot-gpt-6-astra-2",
+      "usd": "unknown",
+      "reserved_usd": 0.42283,
+      "at": "2026-11-04T06:50:17.471Z",
+      "label": "pilot gpt-6-astra #2"
+    },
+    {
+      "attempt": "pilot-gpt-6-astra-3",
+      "usd": "unknown",
+      "reserved_usd": 0.42283,
+      "at": "2026-11-04T06:50:17.488Z",
+      "label": "pilot gpt-6-astra #3"
+    },
+    {
+      "attempt": "pilot-gpt-6-astra-4",
+      "usd": "unknown",
+      "reserved_usd": 0.42283,
+      "at": "2026-11-04T06:50:17.505Z",
+      "label": "pilot gpt-6-astra #4"
+    }
+  ],
+  "released": []
+}

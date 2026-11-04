@@ -1,0 +1,29 @@
+{
+  "arm": "astra",
+  "model_requested": "gpt-6-astra",
+  "id": "b422dcb7",
+  "returncode": 0,
+  "completed": true,
+  "elapsed_seconds": 8.92,
+  "usage": {
+    "input_tokens": 17772,
+    "cached_input_tokens": 15872,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 100,
+    "reasoning_output_tokens": 0
+  },
+  "api_equivalent_usd": 0.039872,
+  "actual_charge_usd": null,
+  "tool_events": [],
+  "strict_pass": true,
+  "schema_valid": true,
+  "expected_verdict": "uncertain",
+  "verdict": "uncertain",
+  "verdict_correct": true,
+  "verified_distinct_counterexamples": 0,
+  "checked_examples": [],
+  "confidence": 1.0,
+  "learned_rule": "Cannot determine the learned rule without weights and biases. The architecture alone establishes neither compliance nor a violation.",
+  "semantic_verdict_correct": true,
+  "structured_examples_pass": true
+}

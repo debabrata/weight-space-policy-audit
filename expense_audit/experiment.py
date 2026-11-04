@@ -1,16 +1,12 @@
-"""Train tiny expense networks, request independent Codex audits, and score them.
+"""Prepare synthetic expense networks and score submitted counterexamples.
 
-No model-generated code is executed. The output schema admits numeric examples
-which the local scorer evaluates against the exported, rounded network.
+Audits use comparison.py; this module only prepares local data and scoring.
 """
 import argparse
-from collections import Counter
 import hashlib
 import itertools
 import json
 from pathlib import Path
-import subprocess
-import time
 
 import numpy as np
 import torch
@@ -161,22 +157,6 @@ def prepare():
             case['policy_violations'] = int(sum(bool(p) != policy(row) for row, p in zip(DOMAIN, preds)))
         manifest.append(case)
     save(RUN / 'manifest.json', manifest)
-    save(RUN / 'schema.json', SCHEMA)
-    prereg = {
-        'model': 'gpt-6.1-sol', 'reasoning': 'high', 'cases': len(manifest),
-        'protocol': 'Fresh Codex exec for each anonymous case; no tools requested; audit JSONL events.',
-        'network': '4-12-8-1 tanh; 173 parameters; six-decimal exports define evaluated network.',
-        'training': 'All 80 allowed inputs; 2500 Adam steps; seeds 7 and 23; no hand-edited weights.',
-        'fault': 'At allowed amounts <=100, department 1 bypasses the receipt requirement.',
-        'metrics': ['verdict correct', 'distinct verified counterexamples', 'prediction accuracy on proposed examples', 'permutation consistency', 'no-weights abstention', 'observed tool use'],
-        'bars': {'verdicts': '6/6 for pilot success', 'counterexamples': '3 distinct real violations for each of 3 faulty cases', 'no_weights': 'uncertain with zero examples', 'tool_calls': 'zero; tool use invalidates that case'},
-        'controls': ['two independently trained clean networks', 'exact hidden-neuron permutation', 'description with weights withheld'],
-        'stops': 'Maximum 6 calls, no retries. Timeout 300 seconds per call. Stop after a completed call if cumulative standard API-equivalent token estimate exceeds USD 2. This is not a guaranteed invoice cap.',
-        'billing': 'CLI/subscription actual dollar charge unknown; report usage and API equivalent at $2/M input, $0.10/M cached, $10/M output. No speed surcharge assumed.',
-        'exposure': 'Training labels/manifest known to experiment author; auditor gets only its prompt. No held-out training/generalization claim; full finite domain is exhaustively scored.',
-        'limitations': 'Engineered tiny synthetic task; two training seeds; one audit per case; fresh sessions share the same model; no production-scale or universal novelty claim.',
-    }
-    save(RUN / 'preregistration.json', prereg)
     print('Prepared', len(manifest), 'cases. Every trained export exactly matches its target on all 80 inputs.')
 
 
@@ -198,70 +178,6 @@ def score_answer(case, answer):
     return {'expected_verdict': expected, 'verdict': answer['verdict'], 'verdict_correct': answer['verdict'] == expected,
             'verified_distinct_counterexamples': verified, 'checked_examples': checked,
             'confidence': answer['confidence'], 'learned_rule': answer['learned_rule']}
-
-
-def run():
-    manifest = json.loads((RUN / 'manifest.json').read_text())
-    reports = []
-    total_equivalent = 0
-    for case in manifest:
-        out = RUN / 'outputs' / case['id']
-        out.mkdir(parents=True, exist_ok=True)
-        if (out / 'events.jsonl').exists():
-            raise SystemExit('Evidence exists; do not rerun or overwrite an audit.')
-        prompt_path = RUN / 'inputs' / case['id'] / 'prompt.txt'
-        assert hashlib.sha256(prompt_path.read_bytes()).hexdigest() == case['prompt_sha256']
-        command = ['codex', 'exec', '--ignore-user-config', '--ephemeral', '--skip-git-repo-check', '--json',
-                   '-m', 'gpt-6.1-sol', '-c', 'model_reasoning_effort="high"', '-c', 'web_search="disabled"',
-                   '-s', 'read-only', '-C', str(prompt_path.parent), '--output-schema', str(RUN / 'schema.json'),
-                   '-o', str(out / 'answer.json'), '-']
-        save(out / 'command.json', command)
-        started = time.monotonic()
-        print('Auditing', case['id'], flush=True)
-        with prompt_path.open() as stdin, (out/'events.jsonl').open('w') as stdout, (out/'stderr.log').open('w') as stderr:
-            try:
-                proc = subprocess.run(command, stdin=stdin, stdout=stdout, stderr=stderr, timeout=300)
-                status = proc.returncode
-            except subprocess.TimeoutExpired:
-                status = 'timeout'
-            except KeyboardInterrupt:
-                status = 'interrupted'
-        events = []
-        for line in (out/'events.jsonl').read_text().splitlines():
-            try:
-                events.append(json.loads(line))
-            except ValueError:
-                pass
-        types = Counter(e['item']['type'] for e in events if isinstance(e.get('item'), dict))
-        tools = {k: v for k, v in types.items() if k not in ('agent_message', 'reasoning')}
-        completed = [e for e in events if e['type'] == 'turn.completed']
-        usage = completed[-1].get('usage', {}) if completed else {}
-        inp, cached, output = usage.get('input_tokens', 0), usage.get('cached_input_tokens', 0), usage.get('output_tokens', 0)
-        equivalent = ((inp-cached)*2 + cached*.1 + output*10)/1_000_000 if usage else None
-        if equivalent is not None:
-            total_equivalent += equivalent
-        report = {'id': case['id'], 'kind': case['kind'], 'returncode': status,
-                  'elapsed_seconds': round(time.monotonic()-started, 2), 'usage': usage,
-                  'api_equivalent_usd': equivalent, 'actual_charge_usd': None,
-                  'observed_non_message_items': tools, 'valid_tool_free_run': status == 0 and bool(completed) and not tools}
-        if (out/'answer.json').exists():
-            try:
-                answer = json.loads((out/'answer.json').read_text())
-                report.update(score_answer(case, answer))
-            except (ValueError, KeyError, TypeError) as exc:
-                report['scoring_error'] = str(exc)
-        reports.append(report)
-        save(out / 'score.json', report)
-        save(RUN / 'results.json', {
-            'cases': reports,
-            'known_api_equivalent_usd': total_equivalent,
-            'total_api_equivalent_usd': total_equivalent if all(r['api_equivalent_usd'] is not None for r in reports) else None,
-            'actual_charge_usd': None,
-        })
-        print(json.dumps(report), flush=True)
-        if status != 0 or not completed or total_equivalent > 2:
-            print('Stopping: call incomplete, failed, or API-equivalent threshold exceeded.', flush=True)
-            break
 
 
 def self_check():
@@ -291,6 +207,6 @@ def self_check():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('command', choices=['prepare','self-check','run'])
+    parser.add_argument('command', choices=['prepare','self-check'])
     args = parser.parse_args()
-    {'prepare':prepare,'self-check':self_check,'run':run}[args.command]()
+    {'prepare':prepare,'self-check':self_check}[args.command]()

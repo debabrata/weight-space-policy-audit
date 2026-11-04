@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "input": "expense_audit/comparison_run/rows.jsonl",
+  "rows": 3,
+  "bad_rows": [],
+  "est_input_tokens": 3968,
+  "est_output_tokens": 24576,
+  "arms": [
+    "gpt-6.1-sol",
+    "gpt-6-astra"
+  ],
+  "checks": {
+    "price_table": {
+      "ok": true,
+      "missing": []
+    },
+    "output_budget": {
+      "ok": true,
+      "budget": 8192,
+      "floor": 8192
+    },
+    "retry_prompt": {
+      "ok": true,
+      "text": "No retries. Preserve all failures and timeouts."
+    },
+    "reservation_fits_cap": {
+      "ok": true,
+      "cap": 10,
+      "max_input_tokens": 1478,
+      "per_arm": {
+        "gpt-6.1-sol": 0.084876,
+        "gpt-6-astra": 0.42438
+      }
+    }
+  },
+  "per_item_usd": {
+    "gpt-6.1-sol": 0.084566,
+    "gpt-6-astra": 0.42283
+  },
+  "excluded_billing": [
+    "prompt-cache writes",
+    "tool and connector fees (web search, code execution, file search, MCP)",
+    "service-tier multipliers (priority, flex, batch) and long-context surcharges",
+    "image, audio and video tokens",
+    "subscription seats and CLI-metered runs (recorded as unknown spend)"
+  ],
+  "pass": true,
+  "stub": "stub-model (no network, $0)"
+}

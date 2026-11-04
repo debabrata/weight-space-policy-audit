@@ -1,7 +1,0 @@
-{
-  "original_preregistration_preserved": true,
-  "decision": "Stopped original phase early after its first 300-second timeout. Second running case interrupted, four not started.",
-  "follow_up": "Separate exploratory protocol in assisted_run/preregistration.json; same weights, Python allowed.",
-  "reason": "Avoid repeating a costly manual-calculation condition without a usable answer. No successful no-tools results are claimed.",
-  "billing": "No usage event returned for either stopped call; do not represent these as free."
-}

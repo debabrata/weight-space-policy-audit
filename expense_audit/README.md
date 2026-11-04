@@ -1,134 +1,68 @@
-# Auditing expense rules from neural network weights
+# Reproduce the Sol and Astra policy audit
 
-An exploratory, code-assisted policy audit inspired by weight-space programming.
+The [article](ARTICLE.md) explains the experiment. The [results](comparison_run/RESULTS.md) report the completed tool-free runs: both models passed the faulty, compliant and missing-weights cases, plus a separate format-only check. Each faulty-case answer contained three verified counterexamples in the required field.
 
-This experiment asks Codex using `gpt-6.1-sol` to audit newly trained, anonymous
-173-parameter networks from their weights. The original tool-free phase stopped
-after one timeout and one interrupted call. A separately registered exploratory
-phase permits local Python calculations. A local scorer checks every proposed
-counterexample against the actual network. This uses small synthetic networks;
-neither Qwen nor GPT's own weights are modified.
+## Environment
 
-The completed diagnosis used Python to reconstruct the network and evaluate all
-80 allowed inputs. This does not replicate the original research's stricter
-interpretation tasks, which forbid executing the network. Our no-tools attempt
-did not finish, and the planned controls remain incomplete.
+The recorded environment used Python 3.14, NumPy 2.4.3, PyTorch 2.10.0, jsonschema 4.26.0 and Codex CLI 0.164.0 on an Apple Silicon Mac. Training and scoring run locally on CPU. Auditors run through OpenAI, so the complete experiment is not offline. Fresh calls require Codex access to `gpt-6.1-sol` and `gpt-6-astra`.
 
-## Setup
-
-Use Python with the dependencies in `requirements.txt` and an authenticated
-Codex CLI. The recorded run used Python 3.14, NumPy 2.4.3 and PyTorch 2.10.0 on
-an Apple Silicon Mac. The auditor runs through OpenAI, so it is not offline.
-Training and scoring run locally on the CPU.
+From the repository root:
 
 ```sh
-cd expense_audit
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements.txt
-codex login
+python -m pip install -r expense_audit/evaluation-requirements.txt
 ```
 
-## Reproduce in a fresh copy
-
-The scripts preserve existing results and refuse to overwrite them. To repeat
-the practical, code-assisted experiment, use fresh copies of `experiment.py`
-and `assisted.py` with no `run/` or `assisted_run/` directories beside them:
+## Verify saved evidence without model calls
 
 ```sh
-python experiment.py prepare
-python experiment.py self-check
-python assisted.py prepare
-python assisted.py run
+python expense_audit/comparison_verify.py
+python expense_audit/experiment.py self-check
 ```
 
-The final command makes up to six Codex calls and consumes your subscription
-allowance or incurs API charges depending on how Codex is authenticated. It
-uses Standard API prices only to estimate equivalent token costs; it cannot
-read your invoice. It stops after a completed call if the cumulative equivalent
-exceeds US$2. This is not a hard billing cap. In the assisted phase each call has
-a 180-second timeout, and a failed or timed-out call stops the phase. Failed
-calls are not retried. The original tool-free protocol remains available as
-`python experiment.py run`, with a 300-second timeout per case, but it is not
-needed to reproduce the assisted phase.
+The independent verifier parses parameters from the saved prompts and uses standard-library forward arithmetic on all 80 inputs. It does not import the training harness, NumPy, Torch or manifest labels. It checks verdicts, submitted examples, schemas, format copies and observed tool events. The separate scorer check exercises correct and incorrect examples.
 
-## What is measured
+## Run a fresh comparison
 
-Inputs are amount (10, 30, ..., 190), receipt (0/1), department (0/1), and urgency
-(0/1). There are 80 combinations. The official policy approves only expenses
-with a receipt and an amount at most 100. Department and urgency must not matter.
+Existing evidence cannot be overwritten. Copy the code into a fresh directory:
 
-Two networks, initialized with seeds 7 and 23, learn that policy. Two others,
-with the same seeds and architecture, learn an exception: department 1 bypasses
-the receipt requirement for amounts at most 100. The entire finite domain is
-used for training, and every exported network must reproduce its target rule
-on all 80 combinations before any model audit is run. Thus this experiment
-measures interpretation of learned functions, not generalization from sparse
-training data.
+```sh
+mkdir expense-audit-replay
+cp expense_audit/experiment.py expense_audit/comparison.py expense_audit/comparison_verify.py expense-audit-replay/
+cd expense-audit-replay
+python experiment.py prepare
+python experiment.py self-check
+python comparison.py prepare
+```
 
-The remaining conditions are an exact hidden-neuron permutation of the first
-faulty network and a prompt with no weights supplied. Each condition gets a
-fresh Codex session with anonymous filenames and no answer key in its prompt.
-The original protocol prohibited tools; the assisted protocol permits local
-Python calculations. The prompt does not claim a fault exists or name the
-hidden exception, and executed commands are reviewed after each assisted run.
+These commands train/export the synthetic data pool, validate the conditional schema and scorer, and freeze the protocol. They make no model calls. The pool contains six checkpoints/controls; the comparison selects only `80283345` (faulty), `328a2eee` (compliant) and `b422dcb7` (missing weights). Unused data is not counted as an audit result.
 
-The schema permits compliant, noncompliant, or uncertain verdicts. For a faulty
-network, full success requires three distinct allowed inputs for which both
-the predicted decision and the claimed policy violation are verified. The
-no-weights control should return uncertain without examples. The frozen pilot
-criteria are in `run/preregistration.json`.
+The next commands consume subscription allowance or incur API charges:
 
-The delivered runner includes a post-run accounting fix: missing usage is
-represented as unknown rather than zero, and an incomplete call stops the
-original phase automatically. `run/experiment-recorded.py` preserves the exact
-version used for the recorded original phase, matching the pre-run fingerprint.
-Training, prompts, and scoring logic were not changed by this fix.
+```sh
+codex login
+python comparison.py sol
+python comparison.py astra
+python comparison_verify.py
+```
 
-The delivered assisted runner also distinguishes the protocol's historical
-origin from events in a fresh replay. `assisted_run/assisted-recorded.py`
-preserves the version used for the published pilot, matching the assisted
-preregistration's source hash. Only descriptive replay metadata changed;
-the audit prompt, settings, and scoring did not.
+Sol runs first. Each model receives a format-only preflight and three independent audits, using high reasoning. The preflight has a 60-second limit; audits have 300 seconds each. Task prompts and schema are identical; model-specific CLI overhead and token totals may differ. Auditors are instructed not to use tools; observed tool use is logged and terminates that arm.
 
-## Evidence
+There are at most eight calls, with no retries. Failed preflights skip that arm's audits. Wrong audit answers and timeouts remain recorded while the fixed pilot continues; provider/CLI errors terminate that arm. Known cumulative Standard API-equivalent usage above $10 stops further calls. This is not a hard invoice cap; missing usage and actual subscription charges remain unknown. No larger evaluation starts automatically.
 
-- `experiment.py`: training, prompt construction, execution, and scoring.
-- `run/preregistration.json`: criteria recorded before Codex calls.
-- `run/manifest.json`: labels, learned weights, training seeds, and prompt hashes.
-  This is an answer key for the author and scorer; do not attach it to an audit.
-- `run/inputs/<anonymous-id>/prompt.txt`: exact auditor input.
-- `run/outputs/<anonymous-id>/`: command, event stream, response, and local score.
-- `run/results.json`: collected measurements and token usage.
-- `run/fingerprints.json`: versions and fingerprints of the initial experiment.
+## Policy and scoring
 
-In the original phase the no-tools property was to be verified from recorded
-events, rather than guaranteed by a provider-level empty tool list. In the
-assisted phase every executed command must be reviewed to ensure it only used
-the supplied case files. No claim of tool-free reading is made for that phase.
-The author knows the labels, and the study contains only two training seeds
-and one audit per condition. The permutation is a dependent control, not a
-third independently trained faulty model. A basic exhaustive script can also
-audit all 80 inputs; there is no claim that an LLM is the cheapest method here.
+Inputs are amount in `{10,30,50,70,90,110,130,150,170,190}`, receipt, department and urgent (each binary): 80 combinations. Approve exactly when amount is at most 100 and a receipt exists. Department and urgency must not change the decision.
 
-## Original phase and exploratory follow-up
+The network is `4 → 12 → 8 → 1`, with tanh hidden layers and 173 parameters. Input is `[amount/100, receipt, department, urgent]`; nonnegative logit means approve. Six-decimal exports define the evaluated network. All 80 inputs were used for training; there is no held-out-input generalization claim.
 
-`run/deviation.json` records the early stop without changing the original
-preregistration. The first case timed out at 300 seconds; the second was
-interrupted when the phase was stopped; the remaining four were not started.
-Neither interrupted call produced a final usage event, so their usage and cost
-are unknown, not zero.
+The faulty network was deliberately trained to let department 1 bypass receipts below the amount limit, producing ten violations. The auditor sees policy, architecture and weights, without checkpoint labels, training source or answers.
 
-`assisted_run/preregistration.json` freezes the follow-up before its calls. It
-uses the same six anonymous conditions, but explicitly asks Codex to use Python
-to evaluate the network over the complete domain. `assisted_run/inputs/`
-contains only each prompt and its weights. Output events, commands, answers,
-scores, and usage are preserved under `assisted_run/outputs/`.
+The schema wraps answers in `result`. A noncompliant verdict requires exactly three objects in `result.examples`; compliant/uncertain verdicts require an empty list. Schema validity, verdict correctness and verified examples are reported separately. Examples must be allowed, distinct, genuinely violate policy and correctly predict the network. Scoring does not automatically validate every sentence of the prose explanation.
 
-This follow-up measures numerical reconstruction plus exhaustive testing.
-Because it was designed after observing the initial timeout, it is exploratory,
-not a completed preregistered six-case tool-free study. It is not a controlled
-measurement of how much enabling tools improves performance.
+## Limits and provenance
 
-To regenerate the decision-grid illustration, install Pillow and run
-`python render_figure.py`. Pillow is optional and is not needed for the audits.
+This is one attempt per model per case, using reused public checkpoints. Both models passed this small comparison. It does not establish general reliability, model superiority, an internal reasoning mechanism or weight repair. Numerical reasoning on inputs was allowed; this is not a protocol forbidding all forward calculations.
+
+[Source provenance](comparison_run/source-provenance.json) retains the preparation/scoring source used at execution and explains the cleaned preparation module supplied for replay.

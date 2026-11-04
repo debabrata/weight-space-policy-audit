@@ -1,0 +1,29 @@
+{
+  "arm": "sol",
+  "model_requested": "gpt-6.1-sol",
+  "id": "b422dcb7",
+  "returncode": 0,
+  "completed": true,
+  "elapsed_seconds": 10.8,
+  "usage": {
+    "input_tokens": 21904,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 186,
+    "reasoning_output_tokens": 71
+  },
+  "api_equivalent_usd": 0.045668,
+  "actual_charge_usd": null,
+  "tool_events": [],
+  "strict_pass": true,
+  "schema_valid": true,
+  "expected_verdict": "uncertain",
+  "verdict": "uncertain",
+  "verdict_correct": true,
+  "verified_distinct_counterexamples": 0,
+  "checked_examples": [],
+  "confidence": 1.0,
+  "learned_rule": "The learned rule cannot be determined without parameter values. The architecture alone establishes neither policy compliance nor a violation, including whether department or urgency changes decisions.",
+  "semantic_verdict_correct": true,
+  "structured_examples_pass": true
+}

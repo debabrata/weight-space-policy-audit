@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "n": 4,
+  "arms": [
+    "gpt-6.1-sol",
+    "gpt-6-astra"
+  ],
+  "cap_usd": 10,
+  "dry_run": "expense_audit/comparison_run/ledger/dry-run.json",
+  "attempts": [
+    {
+      "attempt": "pilot-gpt-6.1-sol-1",
+      "model": "gpt-6.1-sol",
+      "row": 1,
+      "estimate_usd": 0.084566
+    },
+    {
+      "attempt": "pilot-gpt-6.1-sol-2",
+      "model": "gpt-6.1-sol",
+      "row": 2,
+      "estimate_usd": 0.084566
+    },
+    {
+      "attempt": "pilot-gpt-6.1-sol-3",
+      "model": "gpt-6.1-sol",
+      "row": 3,
+      "estimate_usd": 0.084566
+    },
+    {
+      "attempt": "pilot-gpt-6.1-sol-4",
+      "model": "gpt-6.1-sol",
+      "row": 4,
+      "estimate_usd": 0.084566
+    },
+    {
+      "attempt": "pilot-gpt-6-astra-1",
+      "model": "gpt-6-astra",
+      "row": 1,
+      "estimate_usd": 0.42283
+    },
+    {
+      "attempt": "pilot-gpt-6-astra-2",
+      "model": "gpt-6-astra",
+      "row": 2,
+      "estimate_usd": 0.42283
+    },
+    {
+      "attempt": "pilot-gpt-6-astra-3",
+      "model": "gpt-6-astra",
+      "row": 3,
+      "estimate_usd": 0.42283
+    },
+    {
+      "attempt": "pilot-gpt-6-astra-4",
+      "model": "gpt-6-astra",
+      "row": 4,
+      "estimate_usd": 0.42283
+    }
+  ],
+  "started_at": "2026-11-04T06:43:22.184Z",
+  "status": "reserved"
+}

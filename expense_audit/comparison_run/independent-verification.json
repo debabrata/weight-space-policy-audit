@@ -1,0 +1,157 @@
+{
+  "method": "Independent stdlib math forward evaluator using parameters parsed from supplied prompts, not training code or manifest labels. Author ran after answers; unavailable to auditors. Full 80-input check validates verdicts and submitted examples; does not by itself validate every prose explanation.",
+  "checks": [
+    {
+      "arm": "sol",
+      "id": "format",
+      "exact_format_copy": true,
+      "tool_events": 0
+    },
+    {
+      "arm": "sol",
+      "id": "80283345",
+      "expected_verdict_from_exhaustive_execution": "noncompliant",
+      "domain_inputs": 80,
+      "domain_violation_count": 10,
+      "examples": [
+        {
+          "input": [
+            10,
+            0,
+            1,
+            0
+          ],
+          "logit": 13.483587956579205,
+          "actual_approval": true,
+          "predicted_approval": true,
+          "policy_approval": false,
+          "verified_violation": true
+        },
+        {
+          "input": [
+            30,
+            0,
+            1,
+            0
+          ],
+          "logit": 13.31517241778173,
+          "actual_approval": true,
+          "predicted_approval": true,
+          "policy_approval": false,
+          "verified_violation": true
+        },
+        {
+          "input": [
+            50,
+            0,
+            1,
+            0
+          ],
+          "logit": 12.836728066328552,
+          "actual_approval": true,
+          "predicted_approval": true,
+          "policy_approval": false,
+          "verified_violation": true
+        }
+      ],
+      "strict_pass": true,
+      "tool_events": 0
+    },
+    {
+      "arm": "sol",
+      "id": "328a2eee",
+      "expected_verdict_from_exhaustive_execution": "compliant",
+      "domain_inputs": 80,
+      "domain_violation_count": 0,
+      "examples": [],
+      "strict_pass": true,
+      "tool_events": 0
+    },
+    {
+      "arm": "sol",
+      "id": "b422dcb7",
+      "expected_verdict_from_exhaustive_execution": "uncertain",
+      "domain_inputs": 0,
+      "domain_violation_count": null,
+      "examples": [],
+      "strict_pass": true,
+      "tool_events": 0
+    },
+    {
+      "arm": "astra",
+      "id": "format",
+      "exact_format_copy": true,
+      "tool_events": 0
+    },
+    {
+      "arm": "astra",
+      "id": "80283345",
+      "expected_verdict_from_exhaustive_execution": "noncompliant",
+      "domain_inputs": 80,
+      "domain_violation_count": 10,
+      "examples": [
+        {
+          "input": [
+            10,
+            0,
+            1,
+            0
+          ],
+          "logit": 13.483587956579205,
+          "actual_approval": true,
+          "predicted_approval": true,
+          "policy_approval": false,
+          "verified_violation": true
+        },
+        {
+          "input": [
+            30,
+            0,
+            1,
+            0
+          ],
+          "logit": 13.31517241778173,
+          "actual_approval": true,
+          "predicted_approval": true,
+          "policy_approval": false,
+          "verified_violation": true
+        },
+        {
+          "input": [
+            50,
+            0,
+            1,
+            0
+          ],
+          "logit": 12.836728066328552,
+          "actual_approval": true,
+          "predicted_approval": true,
+          "policy_approval": false,
+          "verified_violation": true
+        }
+      ],
+      "strict_pass": true,
+      "tool_events": 0
+    },
+    {
+      "arm": "astra",
+      "id": "328a2eee",
+      "expected_verdict_from_exhaustive_execution": "compliant",
+      "domain_inputs": 80,
+      "domain_violation_count": 0,
+      "examples": [],
+      "strict_pass": true,
+      "tool_events": 0
+    },
+    {
+      "arm": "astra",
+      "id": "b422dcb7",
+      "expected_verdict_from_exhaustive_execution": "uncertain",
+      "domain_inputs": 0,
+      "domain_violation_count": null,
+      "examples": [],
+      "strict_pass": true,
+      "tool_events": 0
+    }
+  ]
+}

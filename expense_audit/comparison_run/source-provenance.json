@@ -1,0 +1,7 @@
+{
+  "recorded_preparation_and_scorer_source": "experiment-recorded.py",
+  "recorded_source_sha256": "2e318a5df4fc94845e754e3ba1d9a548de11c75f8202bd0c8c01e504fe90caa6",
+  "delivered_preparation_source": "../experiment.py",
+  "delivered_source_sha256": "6cbdd2142b60caa9fd9247d126af52375c29934a4087a42d25e6ec731302eba1",
+  "change": "Removed unused audit runner and unused preregistration output from the preparation module; retained training, dataset construction, base prompt material, prediction and scoring logic. Recorded source snapshot is retained so the revised runs can be inspected against the source used at execution. Frozen comparison harness and numeric evidence are unchanged."
+}

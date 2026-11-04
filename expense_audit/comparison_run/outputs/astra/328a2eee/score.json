@@ -1,0 +1,29 @@
+{
+  "arm": "astra",
+  "model_requested": "gpt-6-astra",
+  "id": "328a2eee",
+  "returncode": 0,
+  "completed": true,
+  "elapsed_seconds": 63.59,
+  "usage": {
+    "input_tokens": 18828,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1980,
+    "reasoning_output_tokens": 1552
+  },
+  "api_equivalent_usd": 0.28728,
+  "actual_charge_usd": null,
+  "tool_events": [],
+  "strict_pass": true,
+  "schema_valid": true,
+  "expected_verdict": "compliant",
+  "verdict": "compliant",
+  "verdict_correct": true,
+  "verified_distinct_counterexamples": 0,
+  "checked_examples": [],
+  "confidence": 1,
+  "learned_rule": "On the entire allowed domain, the network approves exactly when receipt = 1 and amount <= 100. Department and urgency affect activations but never change the decision.",
+  "semantic_verdict_correct": true,
+  "structured_examples_pass": true
+}

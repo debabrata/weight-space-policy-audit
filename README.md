@@ -1,94 +1,52 @@
 # Weight space policy audit
 
-**An exploratory, code-assisted policy audit inspired by weight-space programming.**
+**An exploratory, tool-free policy audit with Sol and Astra, inspired by weight-space programming.**
 
-Can Codex infer a hidden expense-policy exception from a small neural network's
-weights and demonstrate it with concrete inputs?
+Can an AI identify a hidden expense-policy mistake from a small neural network's weights?
 
-This repository contains an experiment with **Codex and GPT-6.1 Sol**, its article,
-and the recorded evidence. Training and scoring run locally; the auditor uses
-OpenAI through the Codex CLI.
+We ran **GPT-6.1 Sol followed by GPT-6 Astra**, using the Codex CLI, identical task prompts and schema, high reasoning and a five-minute limit per audit. **Both passed all three cases**, with zero observed tool calls. Independent local execution verified their verdicts and submitted counterexamples.
 
-**[Read the article](expense_audit/ARTICLE.md)** ·
-**[Reproduction guide](expense_audit/README.md)** ·
-**[Recorded results](expense_audit/assisted_run/results.json)**
+**[Read the article](expense_audit/ARTICLE.md)** · **[Results and evidence](expense_audit/comparison_run/RESULTS.md)** · **[Reproduction guide](expense_audit/README.md)**
 
 ![Actual decisions of compliant and faulty networks](expense_audit/figures/decision-grid.png)
 
-## What happened
+## Findings
 
-A 173-parameter network learned to approve department 1 expenses without receipts
-when the amount was at most 100. With Python available, Codex recovered that rule
-and gave three counterexamples in prose, all independently checked by the local
-scorer implementation.
+| Case | Sol | Astra |
+|---|---|---|
+| Faulty network | Correct defect; 3 verified counterexamples | Correct defect; 3 verified counterexamples |
+| Compliant network | Correctly classified compliant | Correctly classified compliant |
+| Weights missing | Correctly answered uncertain | Correctly answered uncertain |
 
-The pilot did **not** meet its complete success criteria. The response left its
-structured examples array empty, the compliant control timed out before a final
-response, and the remaining controls were not run. The original no-tools phase
-also failed to finish. This is one code-assisted diagnosis, not evidence of a
-reliable auditing system or general tool-free weight understanding.
+Both found that department 1 could bypass the receipt requirement at low amounts. Both submitted amounts 10, 30 and 50 with no receipt, department=1 and urgent=0, correctly predicting approval when the policy requires rejection.
 
-## Relationship to the research
+Each model also passed a separate format-only check. All eight calls completed within their limits; there were no retries. Total Standard API-equivalent usage was **$1.09**, including format checks. Actual Codex subscription charges are unknown.
 
-The successful case reconstructed the network's forward calculation in Python
-and evaluated all 80 allowed inputs. It is not a replication of the original
-research's interpretation experiments that forbid running the network. We did
-not demonstrate successful interpretation without execution, and did not edit
-the target network's weights during the audit. The recorded results support
-one verified, code-assisted diagnosis.
-
-## Reproduce without overwriting the recorded evidence
-
-You need Python with NumPy and PyTorch, plus a Codex CLI account with access to
-`gpt-6.1-sol` for the paid audit step. The recorded environment used Python 3.14.
+## Verify locally without another model call
 
 ```sh
 git clone https://github.com/debabrata/weight-space-policy-audit.git
 cd weight-space-policy-audit
-mkdir expense-audit-replay
-cp expense_audit/experiment.py expense_audit/assisted.py expense_audit/requirements.txt expense-audit-replay/
-cd expense-audit-replay
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -r expense_audit/evaluation-requirements.txt
+python expense_audit/comparison_verify.py
 ```
 
-Train the tiny networks and verify the scorer locally, with no model calls:
+This verifies saved responses and examples against all 80 allowed inputs. To run fresh paid audits, follow the [reproduction guide](expense_audit/README.md); existing evidence is protected against overwrite.
 
-```sh
-python experiment.py prepare
-python experiment.py self-check
-python assisted.py prepare
-```
+## Scope
 
-After signing into the Codex CLI, run the assisted audits:
+This is one attempt per model per case, with two actual synthetic networks and a missing-data control. All 80 inputs were used for training. The checkpoints had already been public. These results do not establish held-out generalization, general reliability or model superiority.
 
-```sh
-codex login
-python assisted.py run
-```
+Auditors could reason numerically through example inputs. This is inspired by the [original research](https://rikiyat.github.io/blog/weight-space-programming/), rather than a replication of experiments forbidding all forward calculations. We tested interpretation, not weight repair. Neither Qwen's nor GPT's own weights were modified.
 
-The last command can consume your subscription allowance or incur API charges.
-It permits at most six calls, stops on failure or timeout, and stops after a
-completed call takes its known Standard API-equivalent usage above US$2. This is
-not a hard billing cap; unknown charges remain unknown. No paid audit runs are
-needed to inspect the included results.
+## Evidence
 
-## Evidence and scope
-
-- [Source and local scorer](expense_audit/experiment.py)
-- [Assisted audit runner](expense_audit/assisted.py)
-- [Original protocol and recorded deviations](expense_audit/run/)
-- [Assisted prompts, outputs, and scores](expense_audit/assisted_run/)
-- [Summary and verification notes](expense_audit/SUMMARY.json)
-- [Publication transformations](PUBLICATION.md)
-
-The full input domain has 80 combinations, all used for training. The experiment
-measures reconstruction of those learned functions, not generalization to unseen
-inputs. Neither Qwen's nor GPT's own weights are modified.
-
-## References
-
-- [Sparks of Weight-Space Programming](https://rikiyat.github.io/blog/weight-space-programming/)
-- [Simon Willison's local Qwen experiment](https://simonwillison.net/2026/Nov/3/qwen-can-interpret-model-weights/)
-- [Experiments with weight space programming](https://gpt3experiments.substack.com/p/experiments-with-weight-space-programming)
+- [Sol's faulty-case answer](expense_audit/comparison_run/outputs/sol/80283345/answer.json)
+- [Astra's faulty-case answer](expense_audit/comparison_run/outputs/astra/80283345/answer.json)
+- [All scores, timings and usage](expense_audit/comparison_run/results.json)
+- [Independent verification](expense_audit/comparison_run/independent-verification.json)
+- [Frozen protocol](expense_audit/comparison_run/preregistration.json)
+- [Harness](expense_audit/comparison.py) and [independent verifier](expense_audit/comparison_verify.py)
+- [Publication notes](PUBLICATION.md)
