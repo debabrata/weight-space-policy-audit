@@ -63,6 +63,8 @@ Both used high reasoning, fresh sessions, identical task prompts and schema, and
 
 Both also passed the separate format check. All eight calls completed within their limits, with zero observed tool calls.
 
+![Verified audit results and actual network decisions](figures/policy-audit-results.png)
+
 For the faulty network, both submitted:
 
 | Amount | Receipt | Department | Urgent | Network | Policy |

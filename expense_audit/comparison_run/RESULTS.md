@@ -2,6 +2,8 @@
 
 **Both models passed all three audit cases after the response-format revision.** They identified the faulty network, correctly classified the compliant network, and abstained when weights were missing. Each model also passed a separate format-only check. All eight responses completed within their limits, with zero observed tool calls and no retries.
 
+![Verified Sol and Astra results and actual network decisions](../figures/policy-audit-results.png)
+
 ## What changed
 
 The protocol explicitly requires counterexamples in `result.examples` and uses a nested schema union: a noncompliant verdict requires exactly three objects; compliant/uncertain verdicts require an empty list. The full schema is included in each prompt. A separate format-only session first checks that each model can copy three supplied objects through the same schema. Its artificial values and answer are not passed into audit sessions.

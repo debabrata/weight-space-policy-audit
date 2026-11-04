@@ -8,7 +8,7 @@ We ran **GPT-6.1 Sol followed by GPT-6 Astra**, using the Codex CLI, identical t
 
 **[Read the article](expense_audit/ARTICLE.md)** · **[Results and evidence](expense_audit/comparison_run/RESULTS.md)** · **[Reproduction guide](expense_audit/README.md)**
 
-![Actual decisions of compliant and faulty networks](expense_audit/figures/decision-grid.png)
+![Verified Sol and Astra audit results and actual network decisions](expense_audit/figures/policy-audit-results.png)
 
 ## Findings
 

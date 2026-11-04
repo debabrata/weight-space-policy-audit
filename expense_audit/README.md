@@ -66,3 +66,14 @@ The schema wraps answers in `result`. A noncompliant verdict requires exactly th
 This is one attempt per model per case, using reused public checkpoints. Both models passed this small comparison. It does not establish general reliability, model superiority, an internal reasoning mechanism or weight repair. Numerical reasoning on inputs was allowed; this is not a protocol forbidding all forward calculations.
 
 [Source provenance](comparison_run/source-provenance.json) retains the preparation/scoring source used at execution and explains the cleaned preparation module supplied for replay.
+
+## Rebuild the published figure
+
+The renderer reads the recorded model scores and the exact audited checkpoints, including the seed-23 compliant network. It makes no model calls.
+
+```sh
+python -m pip install -r expense_audit/figure-requirements.txt
+python expense_audit/render_figure.py
+```
+
+Run these commands from the repository root. The output is `expense_audit/figures/policy-audit-results.png`.
