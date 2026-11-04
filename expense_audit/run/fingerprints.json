@@ -1,0 +1,10 @@
+{
+  "python": "Python 3.14.5",
+  "codex": "codex-cli 0.164.0",
+  "files": {
+    "expense_audit/experiment.py": "fd5a944a7d97b2a7b4c4c6b4963626e3ba0ec8706cf16362b1f38bc0d91efdf5",
+    "expense_audit/run/preregistration.json": "c19a20e3e9309c3cd1ffddcef93d5d09159c497f4637ccd73bb9e8ecac3ac2ba",
+    "expense_audit/run/manifest.json": "081a814b9a66ea15c8a48b261581b420d22995bed5cea4958c8e0b7d72236d86",
+    "expense_audit/run/schema.json": "7dbf8c1de4bd331986dfd7682a06e4141b69d1ef0e09b542a95fcbebd7ffc442"
+  }
+}

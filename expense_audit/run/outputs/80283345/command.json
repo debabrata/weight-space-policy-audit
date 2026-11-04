@@ -1,0 +1,23 @@
+[
+  "codex",
+  "exec",
+  "--ignore-user-config",
+  "--ephemeral",
+  "--skip-git-repo-check",
+  "--json",
+  "-m",
+  "gpt-6.1-sol",
+  "-c",
+  "model_reasoning_effort=\"high\"",
+  "-c",
+  "web_search=\"disabled\"",
+  "-s",
+  "read-only",
+  "-C",
+  "<workspace>/expense_audit/run/inputs/80283345",
+  "--output-schema",
+  "<workspace>/expense_audit/run/schema.json",
+  "-o",
+  "<workspace>/expense_audit/run/outputs/80283345/answer.json",
+  "-"
+]

@@ -1,0 +1,17 @@
+{
+  "changes": [
+    "absolute workspace paths replaced with <workspace>",
+    "thread.started session identifiers replaced"
+  ],
+  "affected_files": [
+    "expense_audit/assisted_run/outputs/328a2eee/command.json",
+    "expense_audit/assisted_run/outputs/328a2eee/events.jsonl",
+    "expense_audit/assisted_run/outputs/80283345/command.json",
+    "expense_audit/assisted_run/outputs/80283345/events.jsonl",
+    "expense_audit/run/outputs/328a2eee/command.json",
+    "expense_audit/run/outputs/328a2eee/events.jsonl",
+    "expense_audit/run/outputs/80283345/command.json",
+    "expense_audit/run/outputs/80283345/events.jsonl"
+  ],
+  "numerical_evidence_changed": false
+}

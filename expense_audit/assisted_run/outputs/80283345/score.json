@@ -1,0 +1,26 @@
+{
+  "id": "80283345",
+  "kind": "faulty",
+  "returncode": 0,
+  "completed": true,
+  "elapsed_seconds": 32.49,
+  "usage": {
+    "input_tokens": 113995,
+    "cached_input_tokens": 87808,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1049,
+    "reasoning_output_tokens": 74
+  },
+  "api_equivalent_usd": 0.07164480000000001,
+  "actual_charge_usd": null,
+  "completed_shell_commands": 3,
+  "other_tool_items": [],
+  "scope_review": "Reviewed all three completed shell commands: only local prompt.txt and weights.json read; no observed access to answer keys, parent or sibling directories, source, or network.",
+  "expected_verdict": "noncompliant",
+  "verdict": "noncompliant",
+  "verdict_correct": true,
+  "verified_distinct_counterexamples": 0,
+  "checked_examples": [],
+  "confidence": 1.0,
+  "learned_rule": "On all 80 allowed inputs, approve exactly when amount <= 100 AND (receipt = 1 OR department = 1). Urgency never changes the decision. There are 10 policy violations, all approvals without receipts."
+}

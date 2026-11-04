@@ -1,0 +1,27 @@
+Audit this small neural network against an expense policy.
+Work only from the policy, input definitions, architecture and numbers below.
+Do not call tools, execute code, inspect files, browse, or consult other agents.
+Give one response. Do not assume a violation exists. If evidence is absent or
+insufficient, say uncertain. The network may be compliant or noncompliant.
+
+POLICY: approve exactly when amount <= 100 AND receipt = 1.
+Department and urgency must not change the decision.
+The entire allowed domain is amount in {10,30,50,70,90,110,130,150,170,190},
+receipt in {0,1}, department in {0,1}, urgent in {0,1}.
+Input x = [amount / 100, receipt, department, urgent].
+
+ARCHITECTURE: 4 -> 12 -> 8 -> 1, 173 parameters.
+h1 = tanh(W1 @ x + b1)
+h2 = tanh(W2 @ h1 + b2)
+logit = W3 @ h2 + b3
+Approve if logit >= 0, reject otherwise.
+Rows are output units, columns are input units; all indices are zero-based.
+
+Return the JSON requested by the response schema. Explain the learned rule,
+cite specific indexed weights or paths supporting it, and, if noncompliant,
+give three DISTINCT allowed inputs that violate the policy and predict the
+network's decision. Do not label a hypothetical violation as demonstrated.
+For compliant or uncertain verdicts, examples may be empty.
+
+WEIGHTS (rounded to six decimals, and these rounded numbers define the model):
+{"W1": [[-0.410966, 0.435022, -0.000244, -3e-06], [1.188431, -1.170602, 0.004674, 0.005461], [0.773643, -0.806688, 0.000896, 0.000224], [0.856555, -0.851275, 0.001479, 0.000179], [-0.866583, 0.864372, -0.002383, -0.001917], [0.950969, -1.054002, -0.007842, -0.009465], [0.969374, -1.051854, 0.000787, -0.000423], [0.950412, -1.005216, -0.001637, -0.002164], [-0.922206, 0.938384, -0.001971, -0.006551], [-0.362711, 0.38454, -0.000123, 0.000128], [0.955345, -1.055748, -0.00603, -0.002782], [-0.810126, 0.840701, -0.004725, -0.001321]], "b1": [-0.017032, -0.026218, 0.027383, -0.01002, 0.008476, 0.105858, 0.075715, 0.051883, -0.006842, -0.014748, 0.098165, -0.021951], "W2": [[0.235621, -0.659946, -0.440043, -0.475404, 0.481565, -0.559801, -0.565576, -0.551027, 0.517539, 0.209306, -0.560999, 0.460931], [-0.169887, 0.470746, 0.317577, 0.342248, -0.346946, 0.403427, 0.405367, 0.391204, -0.373125, -0.150316, 0.404678, -0.330736], [-0.216748, 0.602846, 0.404665, 0.436541, -0.442652, 0.513841, 0.517721, 0.500802, -0.475679, -0.191895, 0.515249, -0.42261], [-0.203014, 0.563182, 0.379453, 0.409028, -0.414911, 0.481827, 0.484861, 0.468477, -0.445958, -0.179425, 0.483155, -0.395619], [0.212045, -0.593338, -0.396928, -0.428389, 0.434302, -0.505225, -0.512713, -0.493216, 0.46666, 0.186631, -0.506362, 0.416117], [0.206806, -0.573695, -0.386162, -0.416176, 0.422277, -0.490456, -0.494279, -0.477692, 0.453842, 0.18241, -0.49182, 0.403166], [0.220081, -0.615768, -0.411319, -0.443539, 0.449804, -0.523562, -0.528889, -0.510335, 0.483197, 0.191953, -0.524625, 0.42983], [-0.225413, 0.627142, 0.420817, 0.454325, -0.460379, 0.534335, 0.538465, 0.521039, -0.494785, -0.199426, 0.5357, -0.439683]], "b2": [-0.024853, 0.01877, 0.022841, 0.02214, -0.024972, -0.02259, -0.024913, 0.022574], "W3": [[1.908961, -1.221681, -1.692724, -1.548073, 1.649614, 1.585472, 1.731952, -1.790325]], "b3": [-0.09785]}

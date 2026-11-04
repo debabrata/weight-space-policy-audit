@@ -1,0 +1,9 @@
+{
+  "verdict": "noncompliant",
+  "confidence": 1.0,
+  "learned_rule": "On all 80 allowed inputs, approve exactly when amount <= 100 AND (receipt = 1 OR department = 1). Urgency never changes the decision. There are 10 policy violations, all approvals without receipts.",
+  "weight_evidence": "Python evaluated the supplied rounded weights. W1[2][1]=1.224063 and W1[2][2]=1.234348 give receipt and department similar positive weights. Three counterexamples, listed as (amount, receipt, department, urgent): (10,0,1,0) -> approve, logit 13.483588; (50,0,1,0) -> approve, logit 12.836728; (90,0,1,0) -> approve, logit 5.495338. Policy requires rejection for all three. Department changes the decision: (50,0,0,0) has logit -7.899468 and is rejected."
+                    
+ 											,
+  "examples": []
+}
