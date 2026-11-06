@@ -10,6 +10,52 @@ We ran **GPT-6.1 Sol followed by GPT-6 Astra**, using the Codex CLI, identical t
 
 ![Verified Sol and Astra audit results and actual network decisions](expense_audit/figures/policy-audit-results.png)
 
+## How it works
+
+### The network
+
+Four expense fields go in. One approve/reject decision comes out. The network has **173 parameters**, arranged as **4 → 12 → 8 → 1**.
+
+```mermaid
+flowchart LR
+  subgraph Inputs["4 expense inputs"]
+    A["Amount ÷ 100"]
+    R["Receipt?<br/>0 = no · 1 = yes"]
+    D["Department<br/>0 or 1"]
+    U["Urgent?<br/>0 = no · 1 = yes"]
+  end
+
+  subgraph Network["Small neural network · 173 parameters"]
+    H1["Hidden layer 1<br/>12 neurons · tanh"]
+    H2["Hidden layer 2<br/>8 neurons · tanh"]
+    S["Output layer<br/>1 score (logit)"]
+    H1 --> H2 --> S
+  end
+
+  A --> H1
+  R --> H1
+  D --> H1
+  U --> H1
+  S --> Q{"Score ≥ 0?"}
+  Q -->|Yes| Approve["Approve"]
+  Q -->|No| Reject["Reject"]
+
+  classDef input fill:#eff6ff,stroke:#2563eb,color:#172554
+  classDef layer fill:#f5f3ff,stroke:#7c3aed,color:#2e1065
+  classDef decision fill:#fff7ed,stroke:#c2410c,color:#431407
+  classDef approve fill:#ecfdf5,stroke:#047857,color:#064e3b
+  classDef reject fill:#fff1f2,stroke:#be123c,color:#881337
+  class A,R,D,U input
+  class H1,H2,S layer
+  class Q decision
+  class Approve approve
+  class Reject reject
+```
+
+Each hidden layer combines the incoming values using weights and biases, then applies `tanh`, which keeps its output between −1 and 1. The final layer produces a score: zero or above means approve; below zero means reject.
+
+The intended policy is simpler: **approve only when the amount is at most 100 and a receipt is present**. Department and urgency should not affect the decision. The audit asks whether the supplied weights actually follow that rule.
+
 ## Findings
 
 | Case | Sol | Astra |
