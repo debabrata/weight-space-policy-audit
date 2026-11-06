@@ -58,40 +58,23 @@ The intended policy is simpler: **approve only when the amount is at most 100 an
 
 ### Experiment harness
 
-The harness gives each auditor the policy, network definition and weights, then saves its answer for checking. **Sol runs first, followed by Astra**, using identical task prompts and response schemas.
+The same three cases go to **Sol first, then Astra**: faulty weights, compliant weights and missing weights.
 
 ```mermaid
-flowchart TD
-  Cases["3 audit cases<br/>Faulty weights · compliant weights · missing weights"]
-  Rules["Policy + network definition<br/>Allowed inputs + response schema"]
-  Frozen["Freeze prompts and protocol<br/>Record file hashes; check the scorer locally"]
-  Cases --> Frozen
-  Rules --> Frozen
+flowchart LR
+  P["1. Prepare<br/>Policy + weights"] --> A["2. Audit<br/>Sol, then Astra"]
+  A --> S["3. Save<br/>Answers + logs"]
+  S --> V["4. Verify<br/>All 80 inputs"]
 
-  subgraph Run["Repeat for Sol, then Astra"]
-    Format["Separate format-only check<br/>Copy supplied JSON correctly before auditing"]
-    Audits["3 fresh Codex CLI audit sessions<br/>One case per session · 5-minute limit each"]
-    Answer["Structured answer<br/>Verdict + explanation + counterexamples when required"]
-    Format -->|Pass| Audits
-    Audits --> Answer
-  end
-
-  Frozen --> Format
-  Answer --> Saved["Save evidence<br/>Answers · event logs · timings · token usage"]
-  Saved --> Verify["Independent local verifier<br/>Check schema and tool events<br/>Recompute decisions on all 80 allowed inputs"]
-  Verify --> Results["Publish findings and evidence<br/>Verdict correctness + verified counterexamples"]
-
-  classDef setup fill:#eff6ff,stroke:#2563eb,color:#172554
-  classDef audit fill:#f5f3ff,stroke:#7c3aed,color:#2e1065
-  classDef evidence fill:#fff7ed,stroke:#c2410c,color:#431407
-  classDef verified fill:#ecfdf5,stroke:#047857,color:#064e3b
-  class Cases,Rules,Frozen setup
-  class Format,Audits,Answer audit
-  class Saved evidence
-  class Verify,Results verified
+  classDef step fill:#eff6ff,stroke:#2563eb,color:#172554
+  classDef check fill:#ecfdf5,stroke:#047857,color:#064e3b
+  class P,A,S step
+  class V check
 ```
 
-Auditors are instructed to use no tools and receive no case labels, earlier answers or verifier feedback. The harness records tool events; none were observed in these runs. Verification happens **after** the answers are saved. A faulty-network verdict must include three distinct counterexamples that really violate the policy; compliant and missing-weight verdicts require an empty example list. There are no retries.
+Each model passes a separate JSON format check before auditing. Every case uses a fresh session with identical task prompts and response schemas, a five-minute limit and no retries. Auditors receive no case labels or earlier answers, are instructed to use no tools, and receive no verifier feedback.
+
+After answers are saved, an independent local verifier checks their format, verdicts, counterexamples and tool events. It runs the supplied networks on all 80 allowed inputs. A faulty verdict requires three distinct, verified policy violations; compliant and missing-weight verdicts require an empty example list. No tool calls were observed in these runs.
 
 ## Findings
 
